@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        {% if current_user.role == 'usuario' %}
+            Mis Reservas
+        {% elif current_user.role == 'admin' %}
+            Reservas de mi Cooperativa
+        {% elif current_user.role == 'empleado' %}
+            Reservas de mi Cooperativa
+        {% else %}
+            Reservas
+        {% endif %}
+    </h1>
+</div>
+
+{% if reservas %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Pasajero</th>
+                <th>Cédula</th>
+                <th>Ruta</th>
+                <th>Fecha/Hora</th>
+                <th>Asiento</th>
+                <th>Precio</th>
+                <th>Cooperativa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+            <tr>
+                <td>{{ reserva.nombre }} {{ reserva.apellido }}</td>
+                <td>{{ reserva.cedula }}</td>
+                <td>{{ reserva.origen }} → {{ reserva.destino }}</td>
+                <td>{{ reserva.fecha }} {{ reserva.hora }}</td>
+                <td>{{ reserva.asiento }}</td>
+                <td>${{ "%.2f"|format(reserva.precio) }}</td>
+                <td>{{ reserva.nombre_cooperativa }}</td>
+                <td>
+                    {# Acciones específicas para el usuario (cliente) #}
+                    {% if current_user.role == 'usuario' %}
+                        {% if reserva.estado == 'reservado' %}
+                        <form method="POST" action="{{ url_for('pagar_reserva', venta_id=reserva._id) }}">
+                            <button type="submit" class="btn btn-success btn-sm">Pagar</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('cancelar_reserva', venta_id=reserva._id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de cancelar esta reserva?')">Cancelar</button>
+                            </form>
+                        {# Puedes añadir una opción para que el usuario cancele su propia reserva #}
+                        {% endif %}
+                    {# Acciones para Administrador y Empleado (unificado) #}
+                    {% elif current_user.role in ['admin', 'empleado'] %}
+                        {% if reserva.estado == 'reservado' %}
+                            <form method="POST" action="{{ url_for('confirmar_reserva_cooperativa', venta_id=reserva._id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-primary btn-sm">Confirmar</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('cancelar_reserva_cooperativa', venta_id=reserva._id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de cancelar esta reserva?')">Cancelar</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>No hay reservas o compras para mostrar.</p>
+{% endif %}
+{% endblock %}

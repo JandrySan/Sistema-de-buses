@@ -1,0 +1,111 @@
+<!-- templates/reportes.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Reportes</h1>
+</div>
+
+<!-- Estadísticas Generales -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Estadísticas Generales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4>{{ estadisticas.total_ventas }}</h4>
+                            <p class="text-muted">Total Ventas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4>${{ "%.2f"|format(estadisticas.total_ingresos) }}</h4>
+                            <p class="text-muted">Ingresos Totales</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4>${{ "%.2f"|format(estadisticas.promedio_precio) }}</h4>
+                            <p class="text-muted">Precio Promedio</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4>${{ "%.2f"|format(estadisticas.precio_maximo) }}</h4>
+                            <p class="text-muted">Precio Máximo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ventas por Usuario -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Ventas por Usuario</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Cantidad</th>
+                                <th>Ingresos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usuario, datos in ventas_por_usuario.items() %}
+                            <tr>
+                                <td>{{ usuario }}</td>
+                                <td>{{ datos.cantidad }}</td>
+                                <td>${{ "%.2f"|format(datos.ingresos) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ventas por Ruta -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Ventas por Ruta</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Ruta</th>
+                                <th>Cantidad</th>
+                                <th>Ingresos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ruta, datos in ventas_por_ruta.items() %}
+                            <tr>
+                                <td>{{ ruta }}</td>
+                                <td>{{ datos.cantidad }}</td>
+                                <td>${{ "%.2f"|format(datos.ingresos) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

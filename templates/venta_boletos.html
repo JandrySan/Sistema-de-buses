@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% block title %}Venta de Boletos{% endblock %}
+
+{% block content %}
+<style>
+  /* Contenedor principal con separación */
+  .bus-container {
+    display: flex;
+    gap: 40px;
+    padding: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #f0f4f8;
+    border-radius: 12px;
+  }
+
+  /* Grid para los asientos */
+  .bus-seats {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    gap: 15px;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+  }
+
+  /* Estilos base para cada asiento */
+  .seat {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    font-weight: 600;
+    line-height: 60px;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+    border: 2px solid transparent;
+    background-color: #e6f7ff;
+    color: #0077b6;
+  }
+
+  /* Ocultamos checkbox */
+  .seat input[type="checkbox"] {
+    display: none;
+  }
+
+  /* Hover solo para disponibles */
+  label.seat:hover {
+    background-color: #90e0ef;
+    transform: scale(1.1);
+    border-color: #00b4d8;
+  }
+
+  /* Estado vendido */
+  .seat.vendido {
+    background-color: #f87171 !important; /* rojo */
+    cursor: not-allowed;
+    color: #6b0000;
+    box-shadow: none;
+  }
+
+  /* Estado reservado */
+  .seat.reservado {
+    background-color: #facc15 !important; /* amarillo */
+    cursor: not-allowed;
+    color: #7a5901;
+    box-shadow: none;
+  }
+
+  /* Seleccionado */
+  .seat.selected {
+    background-color: #90ee90 !important; /* verde suave */
+    color: #004d00;
+    box-shadow: 0 0 10px #4caf50aa;
+    border-color: #4caf50;
+  }
+
+  /* Formulario lateral */
+  .boletos-form {
+    flex: 1;
+    min-width: 320px;
+    max-width: 350px;
+    background: white;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Labels con estilo */
+  .boletos-form label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+  }
+
+  /* Inputs y selects */
+  .boletos-form input[type="text"],
+  .boletos-form select {
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1.8px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+  }
+  .boletos-form input[type="text"]:focus,
+  .boletos-form select:focus {
+    outline: none;
+    border-color: #0077b6;
+    box-shadow: 0 0 6px #90e0ef;
+  }
+
+  /* Botón de pagar */
+  .boletos-form button[type="submit"] {
+    margin-top: 20px;
+    background-color: #0077b6;
+    color: white;
+    padding: 12px 0;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .boletos-form button[type="submit"]:hover {
+    background-color: #005f87;
+  }
+</style>
+
+<div class="bus-container">
+  <form method="POST" action="{{ url_for('venta_boletos') }}" style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
+    <!-- Vista de Asientos -->
+    <div class="bus-seats" aria-label="Selector de asientos">
+      {% for i in range(1, max_asientos + 1) %}
+        {% set ocupado = asientos_ocupados | selectattr('asiento', 'equalto', i) | list | first %}
+        {% if ocupado %}
+            <!-- asiento ocupado -->
+            <div class="seat {{ ocupado.estado }}" title="{{ ocupado.estado | capitalize }}">{{ i }}</div>
+        {% else %}
+            <!-- asiento disponible -->
+            <label class="seat" title="Disponible" tabindex="0" role="checkbox" aria-checked="false">
+            <input type="checkbox" name="asiento_checkbox" value="{{ i }}">
+            {{ i }}
+            </label>
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <!-- Formulario lateral -->
+    <div class="boletos-form" aria-label="Formulario de venta de boletos">
+      <label for="ruta_select">Ruta:
+        <select name="ruta_id" id="ruta_select" required onchange="location.href='?ruta_id=' + this.value">
+          <option disabled selected>-- Seleccione una ruta --</option>
+          {% for ruta in rutas %}
+            <option value="{{ ruta._id }}"
+                    data-precio="{{ ruta.precio_base }}"
+                    {% if ruta_sel and ruta._id == ruta_sel._id %}selected{% endif %}>
+              {{ ruta.origen }} → {{ ruta.destino }} - {{ ruta.fecha }} {{ ruta.hora }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label for="cedula">Cédula:
+        <input type="text" name="cedula" id="cedula" required>
+      </label>
+
+      <label for="nombre">Nombre:
+        <input type="text" name="nombre" id="nombre" required>
+      </label>
+
+      <label for="apellido">Apellidos:
+        <input type="text" name="apellido" id="apellido" required>
+      </label>
+
+      <label for="estado">Estado:
+        <select name="estado" id="estado" required>
+          <option value="vendido">Vendido</option>
+          <option value="reservado">Reservado</option>
+        </select>
+      </label>
+
+      <label for="precio_unitario">Precio unitario:
+        <input type="text" id="precio_unitario" readonly>
+      </label>
+
+      <label for="total_pagar">Total a pagar:
+        <input type="text" id="total_pagar" readonly>
+      </label>
+
+      <input type="hidden" name="asientos_seleccionados" id="asientos_seleccionados">
+
+      <button type="submit">Pagar</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function mostrarPrecio() {
+    const select = document.getElementById('ruta_select');
+    if (!select) return;
+    const precio = parseFloat(select.selectedOptions[0]?.dataset.precio || 0);
+    document.getElementById('precio_unitario').value = precio.toFixed(2);
+    actualizarTotal();
+  }
+
+  function actualizarTotal() {
+    const precio = parseFloat(document.getElementById('precio_unitario').value) || 0;
+    const seleccionados = Array.from(document.querySelectorAll('.seat input[type="checkbox"]:checked'));
+    const total = precio * seleccionados.length;
+    document.getElementById('total_pagar').value = total.toFixed(2);
+    document.getElementById('asientos_seleccionados').value = seleccionados.map(cb => cb.value).join(',');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    mostrarPrecio();
+
+    document.querySelectorAll('.seat input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', function () {
+        cb.parentElement.classList.toggle('selected', cb.checked);
+        actualizarTotal();
+      });
+    });
+  });
+</script>
+{% endblock %}

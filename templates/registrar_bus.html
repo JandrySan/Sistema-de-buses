@@ -1,0 +1,81 @@
+<!-- templates/registrar_bus.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Registrar Bus</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Datos del Propietario</h5>
+                    <div class="mb-3">
+                        <label for="cedula" class="form-label">Cédula</label>
+                        <input type="number" class="form-control" name="cedula" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombres" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" name="nombres" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" name="apellidos" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Datos del Bus</h5>
+                    <div class="mb-3">
+                        <label for="placa" class="form-label">Placa</label>
+                        <input type="text" class="form-control" name="placa" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" class="form-control" name="marca" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="combustible" class="form-label">Tipo de Combustible</label>
+                        <select class="form-control" name="combustible" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Gasolina">Gasolina</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="GLP">GLP</option>
+                            <option value="Híbrido">Híbrido</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="color" class="form-label">Color</label>
+                        <input type="text" class="form-control" name="color" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="motor" class="form-label">Número de Motor</label>
+                        <input type="text" class="form-control" name="motor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ruedas" class="form-label">Número de Ruedas</label>
+                        <input type="number" class="form-control" name="ruedas" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pasajeros" class="form-label">Capacidad de Pasajeros</label>
+                        <input type="number" class="form-control" name="pasajeros" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="asientos" class="form-label">Número de Asientos</label>
+                        <input type="number" class="form-control" name="asientos" required>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Registrar Bus
+                </button>
+                <a href="{{ url_for('mostrar_buses') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

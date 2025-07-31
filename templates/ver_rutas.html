@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mt-4">Rutas Disponibles</h1>
+<div class="row mt-4">
+    {% for ruta in rutas %}
+    <div class="col-md-6 mb-3">
+        <div class="card border-primary">
+            <div class="card-body">
+                <h5 class="text-muted">Cooperativa: {{ ruta.nombre_cooperativa }}</h5>
+
+                <h5 class="card-title">{{ ruta.origen }} → {{ ruta.destino }}</h5>
+                <p class="card-text">
+                    Fecha: {{ ruta.fecha }}<br>
+                    Hora: {{ ruta.hora }}<br>
+                    Precio: ${{ "%.2f"|format(ruta.precio_base or 0) }}<br>
+                    Asientos: {{ ruta.asientos_disponibles }}
+                </p>
+                <a href="{{ url_for('venta_boletos') }}?ruta_id={{ ruta._id }}" class="btn btn-success">
+                    <i class="fas fa-ticket-alt"></i> Comprar Boleto
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% if not rutas %}
+<div class="alert alert-info mt-4" role="alert">
+    <i class="fas fa-info-circle"></i> No hay rutas disponibles para mostrar.
+</div>
+{% endif %}
+{% endblock %}

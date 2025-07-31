@@ -1,0 +1,43 @@
+<!-- templates/historial_compras_usuario.html -->
+    {% extends "base.html" %}
+
+    {% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Mi Historial de Compras</h1>
+    </div>
+
+    {% if compras %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Ruta</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Asiento</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Fecha de Compra</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for compra in compras %}
+                <tr>
+                    <td>{{ compra.origen }} a {{ compra.destino }}</td>
+                    <td>{{ compra.fecha }}</td>
+                    <td>{{ compra.hora }}</td>
+                    <td>{{ compra.asiento }}</td>
+                    <td>${{ "%.2f"|format(compra.precio) }}</td>
+                    <td>{{ compra.estado | capitalize }}</td>
+                    <td>{{ compra.fecha_venta }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No has realizado ninguna compra aún.
+    </div>
+    {% endif %}
+    {% endblock %}

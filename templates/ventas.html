@@ -1,0 +1,52 @@
+<!-- templates/ventas.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Ventas de Boletos</h1>
+    <a href="{{ url_for('venta_boletos') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nueva Venta
+    </a>
+</div>
+
+{% if ventas %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha Venta</th>
+                <th>Vendedor</th>
+                <th>Pasajero</th>
+                <th>Cédula</th>
+                <th>Ruta</th>
+                <th>Asiento</th>
+                <th>Precio</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.fecha_venta or 'N/A' }}</td>
+                <td>{{ venta.vendedor }}</td>
+                <td>{{ venta.nombre }} {{ venta.apellido }}</td>
+                <td>{{ venta.cedula }}</td>
+                <td>{{ venta.origen }} → {{ venta.destino }}</td>
+                <td>{{ venta.asiento }}</td>
+                <td>${{ "%.2f"|format(venta.precio) }}</td>
+                <td>
+                    <span class="badge {% if venta.estado == 'vendido' %}bg-success{% else %}bg-warning{% endif %}">
+                        {{ venta.estado.title() }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> No hay ventas registradas.
+</div>
+{% endif %}
+{% endblock %}

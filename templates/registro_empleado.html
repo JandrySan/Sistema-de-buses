@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Registrar Empleado{% endblock %}
+
+{% block content %}
+<style>
+    .register-card {
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .register-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-success {
+        background-color: #16a34a;
+        border-color: #16a34a;
+    }
+
+    .btn-success:hover {
+        background-color: #15803d;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow register-card">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Registro de Empleado</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" autocomplete="off">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre completo</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Ej. Juan Pérez" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="********" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save me-2"></i>Registrar Empleado
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Rutas Disponibles</h1>
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    <a href="{{ url_for('agregar_ruta') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Agregar Ruta
+    </a>
+    {% endif %}
+</div>
+
+---
+
+<h2 class="h3 mb-3">Mapa de Rutas</h2>
+<div id="mynetwork" style="height: 600px; width: 100%; border: 1px solid #ccc;"></div>
+
+---
+
+<h2 class="h3 mb-3">Detalle de Segmentos de Ruta</h2>
+{% if rutas %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Asientos Disponibles</th>
+                <th>Precio del Segmento</th>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <th>Acciones</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for ruta in rutas %}
+            <tr>
+                <td>{{ ruta.origen }}</td>
+                <td>{{ ruta.destino }}</td>
+                <td>{{ ruta.fecha }}</td>
+                <td>{{ ruta.hora }}</td>
+                <td>{{ ruta.asientos_disponibles }}</td>
+                <td>${{ "%.2f"|format(ruta.precio_base or 0) }}</td>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <td>
+                    <a href="{{ url_for('eliminar_ruta', ruta_id=ruta._id|string) }}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Está seguro de eliminar esta ruta?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> No hay rutas disponibles.
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const nodesData = {{ nodes_for_frontend | tojson }};
+        const edgesData = {{ graph_edges | tojson }};
+
+        console.log("Datos de Nodos (dentro del script):", nodesData);
+        console.log("Datos de Aristas (dentro del script):", edgesData);
+        console.log("Tipo de nodesData:", typeof nodesData, "Es array:", Array.isArray(nodesData));
+        console.log("Tipo de edgesData:", typeof edgesData, "Es array:", Array.isArray(edgesData));
+
+        const nodes = new vis.DataSet(nodesData);
+        const edges = new vis.DataSet(edgesData);
+
+        console.log("Vis.DataSet Nodos:", nodes.length);
+        console.log("Vis.DataSet Aristas:", edges.length);
+
+        const container = document.getElementById('mynetwork');
+        console.log("Contenedor del grafo:", container);
+
+        const data = {
+            nodes: nodes,
+            edges: edges
+        };
+        const options = {
+            physics: {
+                enabled: true
+            },
+            edges: {
+                arrows: 'to',
+                color: {
+                    color: '#6c757d',
+                    highlight: '#007bff',
+                    hover: '#007bff',
+                },
+                font: {
+                    align: 'top',
+                    color: '#343a40',
+                    size: 12
+                },
+                smooth: {
+                    enabled: true,
+                    type: 'dynamic',
+                    roundness: 0.4
+                }
+            },
+            nodes: {
+                shape: 'dot',
+                size: 20,
+                font: {
+                    size: 16,
+                    color: '#343a40'
+                },
+                color: {
+                    border: '#007bff',
+                    background: '#e9ecef',
+                    highlight: {
+                        border: '#0056b3',
+                        background: '#cfe2ff'
+                    },
+                    hover: {
+                        border: '#0056b3',
+                        background: '#cfe2ff'
+                    }
+                }
+            },
+            layout: {
+                improvedLayout: true,
+                direction: 'UD',
+                sortMethod: 'directed'
+            },
+            interaction: {
+                navigationButtons: true,
+                keyboard: true,
+                zoomView: true,
+                dragNodes: true,
+                dragView: true
+            },
+        };
+        const network = new vis.Network(container, data, options);
+
+        // Evento al seleccionar un nodo
+        network.on("selectNode", function (params) {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const node = nodes.get(nodeId);
+                console.log("Nodo seleccionado:", node);
+            }
+        });
+
+        network.fit({
+            animation: {
+                duration: 1000,
+                easingFunction: 'easeInOutQuad'
+            }
+        });
+
+        // Evento al seleccionar una arista (ruta)
+        network.on("selectEdge", function (params) {
+            if (params.edges.length > 0) {
+                const edgeId = params.edges[0];
+                const edge = edges.get(edgeId);
+                console.log("Arista seleccionada:", edge);
+                let details = `Ruta de ${edge.from} a ${edge.to}\n`;
+
+                if (edge.data) {
+                    details += `Fecha: ${edge.data.fecha}\n`;
+                    details += `Hora: ${edge.data.hora}\n`;
+                    details += `Precio: $${edge.data.precio_segmento.toFixed(2)}\n`;
+                    details += `Asientos Disponibles: ${edge.data.asientos_disponibles}`;
+                }
+                alert(details);
+            }
+        });
+    });
+</script>
+{% endblock %}

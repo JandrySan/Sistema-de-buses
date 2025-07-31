@@ -1,0 +1,177 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Gestión de Buses{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+{% if current_user.is_authenticated %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="{% if current_user.role == 'admin_general' %}
+      {{ url_for('dashboard_admin_general') }}
+    {% elif current_user.role == 'admin' %}
+      {{ url_for('dashboard_admin') }}
+    {% elif current_user.role == 'empleado' %}
+      {{ url_for('dashboard_empleado') }}
+    {% elif current_user.role == 'usuario' %}
+      {{ url_for('dashboard_usuario') }}
+    {% endif %}">
+      <i class="fas fa-bus"></i> Sistema de Gestión
+    </a>
+    <div class="navbar-nav ms-auto">
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+          <i class="fas fa-user"></i> {{ current_user.username }}
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar Sesión</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="{% if current_user.role == 'admin_general' %}
+              {{ url_for('dashboard_admin_general') }}
+            {% elif current_user.role == 'admin' %}
+              {{ url_for('dashboard_admin') }}
+            {% elif current_user.role == 'empleado' %}
+              {{ url_for('dashboard_empleado') }}
+            {% elif current_user.role == 'usuario' %}
+              {{ url_for('dashboard_usuario') }}
+            {% endif %}">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+          </li>
+
+          {% if current_user.role == 'admin_general' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('listar_cooperativas') }}">
+                <i class="fas fa-building"></i> Cooperativas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('mostrar_usuarios') }}">
+                <i class="fas fa-users"></i> Usuarios
+              </a>
+            </li>
+
+          {% elif current_user.role == 'admin' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('mostrar_buses') }}">
+                <i class="fas fa-bus"></i> Buses
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('registrar_bus') }}">
+                <i class="fas fa-plus-circle"></i> Registrar Bus
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('mostrar_rutas') }}">
+                <i class="fas fa-route"></i> Rutas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('agregar_ruta') }}">
+                <i class="fas fa-plus"></i> Agregar Ruta
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('venta_boletos') }}">
+                <i class="fas fa-ticket-alt"></i> Vender Boletos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('mostrar_ventas') }}">
+                <i class="fas fa-list"></i> Ventas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('reservas_cooperativa') }}">
+                <i class="fas fa-bookmark"></i> Reservados
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('reportes') }}">
+                <i class="fas fa-chart-bar"></i> Reportes
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('ver_empleados') }}">
+                <i class="fas fa-chart-bar"></i> Empleados
+              </a>
+            </li>
+
+          {% elif current_user.role == 'empleado' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('venta_boletos') }}">
+                <i class="fas fa-ticket-alt"></i> Vender Boletos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('mostrar_ventas') }}">
+                <i class="fas fa-list"></i> Ventas
+              </a>
+            </li>
+          {% elif current_user.role == 'usuario' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('ver_rutas') }}">
+                <i class="fas fa-map"></i> Ver Rutas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('historial_compras') }}">
+                <i class="fas fa-history"></i> Historial de Compras
+              </a>
+            </li>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('mis_reservas') }}">
+                <i class="fas fa-bookmark"></i> Mis reservaciones
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+{% endif %}
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- Main content -->
+{% block content %}{% endblock %}
+
+{% if current_user.is_authenticated %}
+    </main>
+  </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

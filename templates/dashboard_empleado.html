@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Empleado{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Panel del Empleado</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ stats.ventas_realizadas }}</h4>
+                        <p>Boletos Vendidos</p>
+                    </div>
+                    <i class="fas fa-ticket-alt fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>${{ "%.2f"|format(stats.ingresos_generados) }}</h4>
+                        <p>Ingresos</p>
+                    </div>
+                    <i class="fas fa-dollar-sign fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ stats.total_rutas }}</h4>
+                        <p>Rutas Activas</p>
+                    </div>
+                    <i class="fas fa-road fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('venta_boletos') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-ticket-alt"></i> Vender Boletos
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('reservas_cooperativa') }}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-bookmark"></i> Ver Reservados
+                        </a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

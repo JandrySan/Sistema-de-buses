@@ -1,0 +1,53 @@
+<!-- templates/buses.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Buses Registrados</h1>
+    {% if session.role == 'admin' %}
+    <a href="{{ url_for('registrar_bus') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Registrar Bus
+    </a>
+    {% endif %}
+</div>
+
+{% if buses %}
+<div class="row">
+    {% for bus in buses %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-bus"></i> {{ bus.marca }} - {{ bus.placa }}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Propietario:</strong> {{ bus.nombres }} {{ bus.apellidos }}</p>
+                <p><strong>Cédula:</strong> {{ bus.cedula }}</p>
+                <p><strong>Color:</strong> {{ bus.color }}</p>
+                <p><strong>Combustible:</strong> {{ bus.combustible }}</p>
+                <p><strong>Pasajeros:</strong> {{ bus.pasajeros }}</p>
+                <p><strong>Asientos:</strong> {{ bus.asientos }}</p>
+                <p><strong>Ruedas:</strong> {{ bus.ruedas }}</p>
+                <p><strong>Motor:</strong> {{ bus.motor }}</p>
+                {% if bus.fecha_registro %}
+                <p><strong>Registro:</strong> {{ bus.fecha_registro }}</p>
+                {% endif %}
+            </div>
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <div class="card-footer">
+                <a href="{{ url_for('eliminar_bus', bus_id=bus._id) }}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Está seguro de eliminar este bus?')">
+                    <i class="fas fa-trash"></i> Eliminar
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> No hay buses registrados.
+</div>
+{% endif %}
+{% endblock %}

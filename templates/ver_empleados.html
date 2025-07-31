@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Lista de Empleados{% endblock %}
+
+{% block content %}
+<style>
+    .empleados-table {
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .empleados-table thead {
+        background-color: #3b82f6;
+        color: white;
+        text-align: center;
+    }
+
+    .empleados-table tbody tr:hover {
+        background-color: #f0f4ff;
+        transition: background-color 0.2s ease;
+    }
+
+    .empleados-table td,
+    .empleados-table th {
+        vertical-align: middle;
+        padding: 12px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #1e3a8a;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2><i class="fas fa-users me-2"></i>Empleados Registrados</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered empleados-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empleados in empleados %}
+                <tr>
+                    <td>{{ empleados.username }}</td>
+                    <td>{{ empleados.email }}</td>
+                    <td>
+                    <a href="{{ url_for('eliminar_empleado', empleados_id=empleados._id|string) }}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Está seguro de eliminar a {{ empleados.username }}? Esta acción es irreversible.')">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted">No hay empleados registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4 mt-3">
+            <a href="{{ url_for('registrar_empleado') }}" class="btn btn-secondary btn-lg w-100">
+            <i class="fas fa-user-plus"></i> Registrar Empleado
+            </a>
+    </div>
+</div>
+{% endblock %}

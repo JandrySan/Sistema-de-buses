@@ -1,0 +1,41 @@
+<!-- templates/usuarios.html -->
+{% extends 'base.html' %}
+{% block title %}Usuarios Registrados{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Listado de Usuarios</h2>
+
+  <table class="table table-striped table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th>#</th>
+        <th>Usuario</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in usuarios %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ user['username'] }}</td>
+        <td>{{ user['role'] }}</td>
+        <td>{{ 'Activo' if user['activo'] else 'Inactivo' }}</td>
+        <td>
+          {% if user['role'] != 'admin_general' %}
+            {% if user['activo'] %}
+              <a href="{{ url_for('desactivar_usuario', usuario_id=user._id) }}" class="btn btn-warning btn-sm">Desactivar</a>
+            {% else %}
+              <a href="{{ url_for('activar_usuario', usuario_id=user._id) }}" class="btn btn-success btn-sm">Activar</a>
+            {% endif %}
+            <a href="{{ url_for('eliminar_usuario', usuario_id=user._id) }}" class="btn btn-danger btn-sm">Eliminar</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

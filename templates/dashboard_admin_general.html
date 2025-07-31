@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Admin General{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Panel de Admin General</h1>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total de Usuarios</h5>
+                <p class="card-text display-5">{{ stats.username}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total de Rutas</h5>
+                <p class="card-text display-5">{{ stats.rutas }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
