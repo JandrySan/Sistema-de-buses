@@ -9,23 +9,23 @@ import json
 from bson.objectid import ObjectId
 from bson.decimal128 import Decimal128
 from bson.errors import InvalidId
+from dotenv import load_dotenv
+load_dotenv()
 
+MONGO_URI = os.getenv('MONGO_URI')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'clave_secreta_para_sesiones_123' # ¡IMPORTANTE! Usa una clave secreta más compleja en producción.
+app.config['SECRET_KEY'] = SECRET_KEY
 
-# Configuracion de LoginManager
+# Login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login' # Si el usuario no está logueado, se le redirige a esta ruta.
+login_manager.login_view = 'login'
 
-# Configuración de MongoDB
-MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
-DATABASE_NAME = 'sistema_buses'
-
-# Inicializar cliente MongoDB
+# MongoDB
 client = MongoClient(MONGO_URI)
-db = client[DATABASE_NAME]
+db = client['sistema_buses']
 
 # Colecciones
 buses_collection = db.buses
@@ -1268,15 +1268,11 @@ def eliminar_ruta(ruta_id):
 #Llamar a main e iniciar programa
 if __name__ == '__main__':
     try:
-        # Verificar conexión a MongoDB
         client.admin.command('ping')
-        print("Conexión exitosa a MongoDB")
-        
-        # Inicializar datos
+        print("✅ Conexión exitosa a MongoDB")
         inicializar_datos()
         
-        # Ejecutar la aplicación
-        app.run(debug=True)
+        port = int(os.environ.get('PORT', 5000))
+        app.run(host='0.0.0.0', port=port)
     except Exception as e:
-        print(f"Error al conectar con MongoDB: {e}")
-        print("Asegúrate de que MongoDB esté ejecutándose en tu sistema")
+        print(f"❌ Error al conectar con MongoDB: {e}")
